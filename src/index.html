@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>SimpleBlock</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-user-select:none; }
+    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#000; color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; }
+    .titlebar { height:32px; -webkit-app-region:drag; position:fixed; top:0; left:0; right:0; z-index:999; display:flex; align-items:center; justify-content:center; }
+    .titlebar::after { content:"SimpleBlock"; font-size:13px; font-weight:500; color:rgba(255,255,255,0.5); }
+    .container { position:relative; z-index:1; width:100%; max-width:480px; padding:20px; animation:fadeUp 0.6s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .logo { width:56px; height:56px; background:linear-gradient(135deg,#0a84ff,#5e5ce6); border-radius:16px; margin:0 auto 24px; display:grid; place-items:center; box-shadow:0 6px 24px rgba(10,132,255,0.25); }
+    .logo svg { width:28px; height:28px; stroke:#fff; fill:none; stroke-width:2; }
+    h1 { font-size:clamp(32px,8vw,44px); font-weight:600; letter-spacing:-0.02em; text-align:center; margin-bottom:6px; background:linear-gradient(180deg,#fff,rgba(255,255,255,0.85)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .subtitle { font-size:clamp(15px,4vw,17px); color:rgba(255,255,255,0.6); text-align:center; margin-bottom:32px; line-height:1.4; }
+    .search-container { position:relative; margin-bottom:20px; }
+    .search-box { width:100%; padding:16px 52px 16px 48px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); border-radius:20px; color:#fff; font-size:16px; font-family:inherit; outline:none; transition:all 0.25s; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); min-height:52px; }
+    .search-box::placeholder { color:rgba(255,255,255,0.5); }
+    .search-box:focus { background:rgba(255,255,255,0.12); border-color:#0a84ff; box-shadow:0 0 0 3px rgba(10,132,255,0.4); }
+    .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); width:20px; height:20px; color:rgba(255,255,255,0.5); pointer-events:none; }
+    .go-btn { position:absolute; right:8px; top:50%; transform:translateY(-50%); width:40px; height:40px; background:#0a84ff; border:none; border-radius:12px; color:#fff; cursor:pointer; display:grid; place-items:center; transition:all 0.2s; }
+    .go-btn:hover { background:#0071e3; transform:translateY(-50%) scale(1.05); }
+    .go-btn:active { transform:translateY(-50%) scale(0.95); }
+    .go-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.5; }
+    .actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
+    .action-btn { padding:14px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; backdrop-filter:blur(20px); min-height:48px; }
+    .action-btn:hover { background:rgba(255,255,255,0.14); transform:translateY(-2px); }
+    .action-btn:active { transform:scale(0.98); }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+    .feature { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 12px; text-align:center; transition:all 0.2s; backdrop-filter:blur(20px); min-height:80px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .feature:hover { background:rgba(255,255,255,0.12); transform:translateY(-3px); }
+    .feature-icon { font-size:22px; margin-bottom:6px; }
+    .feature-title { font-size:13px; font-weight:600; margin-bottom:2px; }
+    .feature-desc { font-size:11px; color:rgba(255,255,255,0.5); }
+    .tv-notice { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px; text-align:center; backdrop-filter:blur(20px); }
+    .tv-notice h3 { font-size:14px; font-weight:600; margin-bottom:6px; color:#0a84ff; }
+    .tv-notice p { font-size:12px; color:rgba(255,255,255,0.5); line-height:1.4; margin-bottom:10px; }
+    .platforms { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+    .platform-tag { background:rgba(255,255,255,0.08); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:500; color:rgba(255,255,255,0.5); }
+    @media(max-width:600px){ .actions{grid-template-columns:1fr} .features{grid-template-columns:1fr} .feature{flex-direction:row;gap:12px;text-align:left;padding:14px} .feature-icon{margin-bottom:0} }
+  </style>
+</head>
+<body>
+  <div class="titlebar"></div>
+  <div class="container">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h1>SimpleBlock</h1>
+    <p class="subtitle">YouTube sem anúncios.<br>Simples, rápido e elegante.</p>
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" class="search-box" id="urlInput" placeholder="youtube.com ou pesquise..." autocomplete="off">
+      <button class="go-btn" id="goBtn"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="actions">
+      <button class="action-btn" onclick="alert('Em breve: Download para Desktop')">📥 Baixar App</button>
+      <button class="action-btn" onclick="alert('Em breve: Configurações')">⚙️ Ajustes</button>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="feature-icon">🛡️</div><div class="feature-title">Sem Anúncios</div><div class="feature-desc">Bloqueio nativo</div></div>
+      <div class="feature"><div class="feature-icon">⚡</div><div class="feature-title">Rápido</div><div class="feature-desc">Motor otimizado</div></div>
+      <div class="feature"><div class="feature-icon">💻</div><div class="feature-title">Desktop</div><div class="feature-desc">Win/Mac/Linux</div></div>
+    </div>
+    <div class="tv-notice">
+      <h3>Versão Desktop Alpha</h3>
+      <p>Este é o núcleo do SimpleBlock. Em breve disponível para Windows, Mac e Linux.</p>
+      <div class="platforms"><span class="platform-tag">Windows</span><span class="platform-tag">macOS</span><span class="platform-tag">Linux</span></div>
+    </div>
+  </div>
+  <script>
+    document.getElementById('goBtn').onclick = () => {
+      const val = document.getElementById('urlInput').value.trim() || 'youtube.com';
+      const isUrl = val.includes('.') && !val.includes(' ');
+      const url = isUrl ? (val.startsWith('http') ? val : `https://${val}`) : `https://www.youtube.com/results?search_query=${encodeURIComponent(val)}`;
+      // Aqui futuramente injetaremos um <webview> ou abriremos em nova janela
+      alert('🚀 Navegando para: ' + url + '\n\n(Em breve: renderização direta com bloqueio nativo)');
+    };
+    document.getElementById('urlInput').addEventListener('keypress', e => { if(e.key==='Enter') document.getElementById('goBtn').click(); });
+  </script>
+</body>
+</html>
