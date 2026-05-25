@@ -17,14 +17,22 @@ function createWindow() {
     }
   });
 
-  // 🛡️ Motor de bloqueio nativo (mesma base do Brave/Firefox Focus)
   ElectronBlocker.fromPrebuiltAdsAndTracking(fetch).then(blocker => {
     blocker.enableBlockingInSession(session.defaultSession);
-    console.log('✅ SimpleBlock: Bloqueio nativo ativado');
+    console.log('✅ SimpleBlock: Bloqueio ativado');
+  }).catch(err => {
+    console.error('❌ Erro ao carregar bloqueador:', err);
   });
 
   win.loadFile(path.join(__dirname, 'index.html'));
 }
 
 app.whenReady().then(createWindow);
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
