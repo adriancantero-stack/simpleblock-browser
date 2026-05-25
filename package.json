@@ -1,25 +1,38 @@
 {
   "name": "simpleblock",
   "version": "1.0.0",
-  "description": "Navegador leve, rápido e sem anúncios",
+  "description": "Navegador leve e sem anúncios",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
+    "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.13.0",
-    "@ghostery/adblocker": "^2.0.0",
-    "@ghostery/adblocker-electron": "^2.0.0",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "@ghostery/adblocker": "^2.1.1",
+    "@ghostery/adblocker-electron": "^2.1.1",
     "cross-fetch": "^4.0.0"
   },
   "build": {
     "appId": "com.simpleblock.app",
     "productName": "SimpleBlock",
-    "directories": { "output": "dist" },
-    "win": { "target": "nsis", "icon": "build/icon.ico" },
-    "mac": { "target": "dmg", "icon": "build/icon.icns" },
-    "linux": { "target": "AppImage", "icon": "build/icon.png" }
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }
